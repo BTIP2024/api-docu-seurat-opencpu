@@ -38,7 +38,7 @@ knitr::opts_chunk$set(
 
 # Pre-processing pipeline
 
-The standard steps of the pre-processing of scRNA sequences are as follows: ![](img/flow.png) The steps are performed separately using their own R functions that can be called individually in OpenCPU. But first let's set up our remote access.
+The standard steps of the pre-processing of scRNA sequences are as follows: ![Figure 1. The standard pre-processing scRNAseq pipeline based on R Seurat package](img/flow.png) The steps are performed separately using their own R functions that can be called individually in OpenCPU. But first let's set up our remote access.
 
 # A. Before running the session
 
@@ -76,15 +76,17 @@ OpenCPU uses the HTTP methods **GET** (to retrieve a source) and **POST** (for R
 
 There pre-processing pipeline for scRNA sequences are available on the server and can be accessed based on the path.
 
-+--------------------------------------------+----------------------------------------------------------+
-| Path                                       | What                                                     |
-+============================================+==========================================================+
-| /ocpu/library/{package name}/              | R packages installed in the global library of the server |
-+--------------------------------------------+----------------------------------------------------------+
-| /ocpu/library/{package name}/R/{function}/ | Function within the package                              |
-+--------------------------------------------+----------------------------------------------------------+
-| /ocpu/library/{package name}/DESCRIPTION   | Shows the description/details of the package             |
-+--------------------------------------------+----------------------------------------------------------+
++--------------------------------------------+----------------------------------------------------------------+
+| Path                                       | What                                                           |
++============================================+================================================================+
+| /ocpu/library/{package name}/              | R packages installed in the global library of the server       |
++--------------------------------------------+----------------------------------------------------------------+
+| /ocpu/library/{package name}/R/{function}/ | Function within the package                                    |
++--------------------------------------------+----------------------------------------------------------------+
+| /ocpu/library/{package name}/DESCRIPTION   | Shows the description/details of the package                   |
++--------------------------------------------+----------------------------------------------------------------+
+| /ocpu/tmp/{key}                            | Temporary session that hold outputs from a function/script RPC |
++--------------------------------------------+----------------------------------------------------------------+
 
 ### **R Package API**
 
@@ -122,7 +124,7 @@ Any of the /{package}/ libraries support the following endpoints:
 
 # B. Running a session
 
-Each step of the pipeline have their own functions. These functions can be accessed via their respective packages. A guide on which packages and functions to use are shown below. ![](img/steps.png){width="2000" height="339"}
+Each step of the pipeline have their own functions. These functions can be accessed via their respective packages. A guide on which packages and functions to use are shown below. ![Figure 2. Overview on the use of the scRNAseq pre-processing packages via OpenCPU](img/steps.png){width="2000" height="339"}
 
 ::: {style="background-color:lightgray;"}
 > To perform the quality control step:
@@ -132,19 +134,57 @@ Each step of the pipeline have their own functions. These functions can be acces
 > where **qualitycontrolseurat** is the package name and **qc_seurat** is the function. Type "input" as the parameter name then upload the respective input file.
 :::
 
+### **API Endpoints for the pipeline**
+
+The table lists the packages for the workflow and the function included per package. The <mark>**mandatory parameter name**</mark> for all the function is "input" and will only take a <mark>single input file or **mandatory parameter value**</mark>. The functions can be called using **POST** before the API Endpoint.
+
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| Package                | Function               | Mandatory parameter name | Mandatory parameter value                                                             | API Endpoint                                           |
++========================+========================+==========================+=======================================================================================+========================================================+
+| writeseuratobject      | write_seurat_object()  | input                    | File with the ff. extensions: ".gz", ".h5", ".loom", ".h5ad"                          | ../library/writeseuratobject/R/write_seurat_object     |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| qualitycontrolseurat   | qc_seurat()            | input                    | Seurat object with .rds extension/file named "seurat_object.rds"                      | ../library/qualitycontrolseurat/R/qc_seurat            |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| qualitycontrolseurat   | normalization_seurat() | input                    | Seurat object after QC/file named "afterQC_seurat.rds"                                | ../library/qualitycontrolseurat/R/normalization_seurat |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| selectionscalingseurat | variable_features()    | input                    | Seurat object after normalization/file named "normalized_seurat.rds"                  | ../library/selectionscalingseurat/R/variable_features  |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| selectionscalingseurat | scaling_seurat()       | input                    | Seurat object after selection of variable features/file named "variable_features.rds" | ../library/selectionscalingseurat/R/scaling_seurat     |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| pcaseurat              | pca_seurat()           | input                    | Seurat object after scaling/file named "after_scaling.rds"                            | ../library/pcaseurat/R/pca_seurat                      |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| nonlinearreduction     | clusters_seurat()      | input                    | Seurat object after scaling/file named "after_scaling.rds"                            | ../library/nonlinearreduction/R/clusters_seurat        |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| nonlinearreduction     | tsne_seurat()          | input                    | Seurat object after clustering/file named "clusters.rds"                              | ../library/nonlinearreduction/R/tsne_seurat            |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| nonlinearreduction     | umap_seurat()          | input                    | Seurat object after clustering/file named "clusters.rds"                              | ../library/nonlinearreduction/R/umap_seurat            |
++------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+
+::: {style="background-color:lightgray;"}
+> If using the packages from the beginning (writeseuratobject), the mandatory parameter value is the file generated from the step previous. See figure 2 as guide.
+:::
+
 ### **Input, Output: Data and Formats**
 
 These are the extensions of input and output files.
 
-| Format | Content-type    | Notes                                   |
-|--------|-----------------|-----------------------------------------|
-| h5     | list/matrix     | input for the writeseuratobject package |
-| gz     | zipped matrix   | input for the writeseuratobject package |
-| loom   | matrix          | input for the writeseuratobject package |
-| h5ad   | annotation data | input for the writeseuratobject package |
-| rds    | seurat object   | both input and output of packages       |
-| png    | image           | output only                             |
-| html   | web content     | output only                             |
++----------------+-----------------+-----------------------------------------+
+| Format         | Content-type    | Notes                                   |
++================+=================+=========================================+
+| h5             | list/matrix     | input for the writeseuratobject package |
++----------------+-----------------+-----------------------------------------+
+| gz             | zipped matrix   | input for the writeseuratobject package |
++----------------+-----------------+-----------------------------------------+
+| loom           | matrix          | input for the writeseuratobject package |
++----------------+-----------------+-----------------------------------------+
+| h5ad           | annotation data | input for the writeseuratobject package |
++----------------+-----------------+-----------------------------------------+
+| rds            | seurat object   | both input and output of packages       |
++----------------+-----------------+-----------------------------------------+
+| png            | image           | output only                             |
++----------------+-----------------+-----------------------------------------+
+| html           | web content     | output only                             |
++----------------+-----------------+-----------------------------------------+
 
 # C. After running a session
 
@@ -193,3 +233,165 @@ The codes returned by OpenCPU
 +-----------------+-------------------------------------------------------+--------------------------------------------------------------------+
 | 503 Bad Request | Serious problem with the server                       | (Should be resolved by the administrator by looking in error logs) |
 +-----------------+-------------------------------------------------------+--------------------------------------------------------------------+
+
+### **API Outputs after running the steps in the pipeline**
+
++--------------------------------------------------------+--------------------------------------------------+
+| API call endpoint                                      | Responses/Output                                 |
++========================================================+==================================================+
+| ../library/writeseuratobject/R/write_seurat_object     | /ocpu/tmp/{key}/R/write_seurat_object            |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/seurat_object.rds          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/{input file}               |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/qualitycontrolseurat/R/qc_seurat            | /ocpu/tmp/{key}/qc_seurat                        |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/afterQC_seurat.rds         |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/seurat_object.rds          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/violin_plot.png            |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/violin_plots.html          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/scatter_plots.html         |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/qualitycontrolseurat/R/normalization_seurat | /ocpu/tmp/{key}/normalization_seurat             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/after_normalization.rds    |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/afterQC_seurat.rds         |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/selectionscalingseurat/R/variable_features  | /ocpu/tmp/{key}/variable_features                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/normalized_seurat.rds      |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/top10_variablefeatures.rds |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/variable_features_plot.png |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/variablefeatures.rds       |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/selectionscalingseurat/R/scaling_seurat     | /ocpu/tmp/{key}/scaling_seurat                   |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/after_scaling.rds          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/normalized_seurat.rds      |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/pcaseurat/R/pca_seurat                      | /ocpu/tmp/{key}/pca_seurat                       |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/graphics/1                       |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/clusters.rds               |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/pca_unlabeled.html         |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/pca03_labeled.html         |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/pca01_labeled.html         |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/pca_results.png            |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/pca_plot_unlabeled.png     |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/heatmap.png                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/heatmap_multiple.png       |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/elbowplot.png              |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/nonlinearreduction/R/clusters_seurat        | /ocpu/tmp/{key}/clusters_seurat                  |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/after_scaling.rds          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/clusters.rds               |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/nonlinearreduction/R/tsne_seurat            | /ocpu/tmp/{key}/tsne_seurat                      |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/clusters.rds               |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/tsne.html                  |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/tsne_3dplot.html           |
++--------------------------------------------------------+--------------------------------------------------+
+| ../library/nonlinearreduction/R/umap_seurat            | /ocpu/tmp/{key}/umap_seurat                      |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/source                           |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/console                          |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/info                             |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/clusters.rds               |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/umap.html                  |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/umap_3dplot.html           |
++--------------------------------------------------------+--------------------------------------------------+
