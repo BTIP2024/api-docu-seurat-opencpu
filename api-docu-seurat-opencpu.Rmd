@@ -234,7 +234,7 @@ The codes returned by OpenCPU
 | 503 Bad Request | Serious problem with the server                       | (Should be resolved by the administrator by looking in error logs) |
 +-----------------+-------------------------------------------------------+--------------------------------------------------------------------+
 
-### **API Outputs after running the steps in the pipeline**
+### **API Outputs after running the steps of the pipeline**
 
 +--------------------------------------------------------+--------------------------------------------------+
 | API call endpoint                                      | Responses/Output                                 |
