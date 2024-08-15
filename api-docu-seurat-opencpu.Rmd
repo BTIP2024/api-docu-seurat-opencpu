@@ -136,29 +136,29 @@ Each step of the pipeline have their own functions. These functions can be acces
 
 ### **API Endpoints for the pipeline**
 
-The table lists the packages for the workflow and the function included per package. The <mark>**mandatory parameter name**</mark> for all the function is "input" and will only take a <mark>single input file or **mandatory parameter value**</mark>. The functions can be called using **POST** before the API Endpoint.
+The table lists the packages for the workflow and the function included per package. The <mark>**mandatory parameter name**</mark> for all the function is "**input**" and will only take a <mark>single input file or **mandatory parameter value**</mark>. The functions can be called using **POST** before the API Endpoint.
 
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| Package                | Function               | Mandatory parameter name | Mandatory parameter value                                                             | API Endpoint                                           |
-+========================+========================+==========================+=======================================================================================+========================================================+
-| writeseuratobject      | write_seurat_object()  | input                    | File with the ff. extensions: ".gz", ".h5", ".loom", ".h5ad"                          | ../library/writeseuratobject/R/write_seurat_object     |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| qualitycontrolseurat   | qc_seurat()            | input                    | Seurat object with .rds extension/file named "seurat_object.rds"                      | ../library/qualitycontrolseurat/R/qc_seurat            |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| qualitycontrolseurat   | normalization_seurat() | input                    | Seurat object after QC/file named "afterQC_seurat.rds"                                | ../library/qualitycontrolseurat/R/normalization_seurat |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| selectionscalingseurat | variable_features()    | input                    | Seurat object after normalization/file named "normalized_seurat.rds"                  | ../library/selectionscalingseurat/R/variable_features  |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| selectionscalingseurat | scaling_seurat()       | input                    | Seurat object after selection of variable features/file named "variable_features.rds" | ../library/selectionscalingseurat/R/scaling_seurat     |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| pcaseurat              | pca_seurat()           | input                    | Seurat object after scaling/file named "after_scaling.rds"                            | ../library/pcaseurat/R/pca_seurat                      |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| nonlinearreduction     | clusters_seurat()      | input                    | Seurat object after scaling/file named "after_scaling.rds"                            | ../library/nonlinearreduction/R/clusters_seurat        |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| nonlinearreduction     | tsne_seurat()          | input                    | Seurat object after clustering/file named "clusters.rds"                              | ../library/nonlinearreduction/R/tsne_seurat            |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
-| nonlinearreduction     | umap_seurat()          | input                    | Seurat object after clustering/file named "clusters.rds"                              | ../library/nonlinearreduction/R/umap_seurat            |
-+------------------------+------------------------+--------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| Package                | Function               | Mandatory parameter value                                                             | API Endpoint                                           |
++========================+========================+=======================================================================================+========================================================+
+| writeseuratobject      | write_seurat_object()  | File with the ff. extensions: ".gz", ".h5", ".loom", ".h5ad"                          | ../library/writeseuratobject/R/write_seurat_object     |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| qualitycontrolseurat   | qc_seurat()            | Seurat object with .rds extension/file named "seurat_object.rds"                      | ../library/qualitycontrolseurat/R/qc_seurat            |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| qualitycontrolseurat   | normalization_seurat() | Seurat object after QC/file named "afterQC_seurat.rds"                                | ../library/qualitycontrolseurat/R/normalization_seurat |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| selectionscalingseurat | variable_features()    | Seurat object after normalization/file named "normalized_seurat.rds"                  | ../library/selectionscalingseurat/R/variable_features  |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| selectionscalingseurat | scaling_seurat()       | Seurat object after selection of variable features/file named "variable_features.rds" | ../library/selectionscalingseurat/R/scaling_seurat     |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| pcaseurat              | pca_seurat()           | Seurat object after scaling/file named "after_scaling.rds"                            | ../library/pcaseurat/R/pca_seurat                      |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| nonlinearreduction     | clusters_seurat()      | Seurat object after scaling/file named "after_scaling.rds"                            | ../library/nonlinearreduction/R/clusters_seurat        |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| nonlinearreduction     | tsne_seurat()          | Seurat object after clustering/file named "clusters.rds"                              | ../library/nonlinearreduction/R/tsne_seurat            |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
+| nonlinearreduction     | umap_seurat()          | Seurat object after clustering/file named "clusters.rds"                              | ../library/nonlinearreduction/R/umap_seurat            |
++------------------------+------------------------+---------------------------------------------------------------------------------------+--------------------------------------------------------+
 
 ::: {style="background-color:lightgray;"}
 > If using the packages from the beginning (writeseuratobject), the mandatory parameter value is the file generated from the step previous. See figure 2 as guide.
@@ -168,23 +168,15 @@ The table lists the packages for the workflow and the function included per pack
 
 These are the extensions of input and output files.
 
-+----------------+-----------------+-----------------------------------------+
-| Format         | Content-type    | Notes                                   |
-+================+=================+=========================================+
-| h5             | list/matrix     | input for the writeseuratobject package |
-+----------------+-----------------+-----------------------------------------+
-| gz             | zipped matrix   | input for the writeseuratobject package |
-+----------------+-----------------+-----------------------------------------+
-| loom           | matrix          | input for the writeseuratobject package |
-+----------------+-----------------+-----------------------------------------+
-| h5ad           | annotation data | input for the writeseuratobject package |
-+----------------+-----------------+-----------------------------------------+
-| rds            | seurat object   | both input and output of packages       |
-+----------------+-----------------+-----------------------------------------+
-| png            | image           | output only                             |
-+----------------+-----------------+-----------------------------------------+
-| html           | web content     | output only                             |
-+----------------+-----------------+-----------------------------------------+
+| Format | Content-type    | Notes                                   |
+|--------|-----------------|-----------------------------------------|
+| h5     | list/matrix     | input for the writeseuratobject package |
+| gz     | zipped matrix   | input for the writeseuratobject package |
+| loom   | matrix          | input for the writeseuratobject package |
+| h5ad   | annotation data | input for the writeseuratobject package |
+| rds    | seurat object   | both input and output of packages       |
+| png    | image           | output only                             |
+| html   | web content     | output only                             |
 
 # C. After running a session
 
@@ -333,11 +325,13 @@ The codes returned by OpenCPU
 |                                                        |                                                  |
 |                                                        | /ocpu/tmp/{key}/files/DESCRIPTION                |
 |                                                        |                                                  |
-|                                                        | /ocpu/tmp/{key}/files/pca_unlabeled.html         |
+|                                                        | /ocpu/tmp/{key}/files/pca_2d_unlabeled.html      |
 |                                                        |                                                  |
-|                                                        | /ocpu/tmp/{key}/files/pca03_labeled.html         |
+|                                                        | /ocpu/tmp/{key}/files/pca03_2dplot_labeled.html  |
 |                                                        |                                                  |
-|                                                        | /ocpu/tmp/{key}/files/pca01_labeled.html         |
+|                                                        | /ocpu/tmp/{key}/files/pca01_2dplot_labeled.html  |
+|                                                        |                                                  |
+|                                                        | /ocpu/tmp/{key}/files/pca_3dplot.html            |
 |                                                        |                                                  |
 |                                                        | /ocpu/tmp/{key}/files/pca_results.png            |
 |                                                        |                                                  |
@@ -375,7 +369,7 @@ The codes returned by OpenCPU
 |                                                        |                                                  |
 |                                                        | /ocpu/tmp/{key}/files/clusters.rds               |
 |                                                        |                                                  |
-|                                                        | /ocpu/tmp/{key}/files/tsne.html                  |
+|                                                        | /ocpu/tmp/{key}/files/tsne_2dplot.html           |
 |                                                        |                                                  |
 |                                                        | /ocpu/tmp/{key}/files/tsne_3dplot.html           |
 +--------------------------------------------------------+--------------------------------------------------+
@@ -391,7 +385,7 @@ The codes returned by OpenCPU
 |                                                        |                                                  |
 |                                                        | /ocpu/tmp/{key}/files/clusters.rds               |
 |                                                        |                                                  |
-|                                                        | /ocpu/tmp/{key}/files/umap.html                  |
+|                                                        | /ocpu/tmp/{key}/files/umap_2dplot.html           |
 |                                                        |                                                  |
 |                                                        | /ocpu/tmp/{key}/files/umap_3dplot.html           |
 +--------------------------------------------------------+--------------------------------------------------+

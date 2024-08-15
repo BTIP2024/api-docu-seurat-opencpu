@@ -1485,7 +1485,7 @@ font-size: 0.95em;
 
 <h1 class="title toc-ignore">API Documentation for the Pre-processing of
 scRNAseq using OpenCPU</h1>
-<h4 class="date">Compiled: August 14, 2024</h4>
+<h4 class="date">Compiled: August 15, 2024</h4>
 
 </div>
 
@@ -1700,23 +1700,21 @@ parameter name then upload the respective input file.</p>
 <h3><strong>API Endpoints for the pipeline</strong></h3>
 <p>The table lists the packages for the workflow and the function
 included per package. The <mark><strong>mandatory parameter
-name</strong></mark> for all the function is “input” and will only take
-a <mark>single input file or <strong>mandatory parameter
-value</strong></mark>. The functions can be called using
+name</strong></mark> for all the function is “<strong>input</strong>”
+and will only take a <mark>single input file or <strong>mandatory
+parameter value</strong></mark>. The functions can be called using
 <strong>POST</strong> before the API Endpoint.</p>
 <table style="width:99%;">
 <colgroup>
-<col width="11%" />
-<col width="11%" />
 <col width="12%" />
-<col width="39%" />
-<col width="25%" />
+<col width="12%" />
+<col width="44%" />
+<col width="28%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th>Package</th>
 <th>Function</th>
-<th>Mandatory parameter name</th>
 <th>Mandatory parameter value</th>
 <th>API Endpoint</th>
 </tr>
@@ -1725,14 +1723,12 @@ value</strong></mark>. The functions can be called using
 <tr class="odd">
 <td>writeseuratobject</td>
 <td>write_seurat_object()</td>
-<td>input</td>
 <td>File with the ff. extensions: “.gz”, “.h5”, “.loom”, “.h5ad”</td>
 <td>../library/writeseuratobject/R/write_seurat_object</td>
 </tr>
 <tr class="even">
 <td>qualitycontrolseurat</td>
 <td>qc_seurat()</td>
-<td>input</td>
 <td>Seurat object with .rds extension/file named
 “seurat_object.rds”</td>
 <td>../library/qualitycontrolseurat/R/qc_seurat</td>
@@ -1740,14 +1736,12 @@ value</strong></mark>. The functions can be called using
 <tr class="odd">
 <td>qualitycontrolseurat</td>
 <td>normalization_seurat()</td>
-<td>input</td>
 <td>Seurat object after QC/file named “afterQC_seurat.rds”</td>
 <td>../library/qualitycontrolseurat/R/normalization_seurat</td>
 </tr>
 <tr class="even">
 <td>selectionscalingseurat</td>
 <td>variable_features()</td>
-<td>input</td>
 <td>Seurat object after normalization/file named
 “normalized_seurat.rds”</td>
 <td>../library/selectionscalingseurat/R/variable_features</td>
@@ -1755,7 +1749,6 @@ value</strong></mark>. The functions can be called using
 <tr class="odd">
 <td>selectionscalingseurat</td>
 <td>scaling_seurat()</td>
-<td>input</td>
 <td>Seurat object after selection of variable features/file named
 “variable_features.rds”</td>
 <td>../library/selectionscalingseurat/R/scaling_seurat</td>
@@ -1763,28 +1756,24 @@ value</strong></mark>. The functions can be called using
 <tr class="even">
 <td>pcaseurat</td>
 <td>pca_seurat()</td>
-<td>input</td>
 <td>Seurat object after scaling/file named “after_scaling.rds”</td>
 <td>../library/pcaseurat/R/pca_seurat</td>
 </tr>
 <tr class="odd">
 <td>nonlinearreduction</td>
 <td>clusters_seurat()</td>
-<td>input</td>
 <td>Seurat object after scaling/file named “after_scaling.rds”</td>
 <td>../library/nonlinearreduction/R/clusters_seurat</td>
 </tr>
 <tr class="even">
 <td>nonlinearreduction</td>
 <td>tsne_seurat()</td>
-<td>input</td>
 <td>Seurat object after clustering/file named “clusters.rds”</td>
 <td>../library/nonlinearreduction/R/tsne_seurat</td>
 </tr>
 <tr class="odd">
 <td>nonlinearreduction</td>
 <td>umap_seurat()</td>
-<td>input</td>
 <td>Seurat object after clustering/file named “clusters.rds”</td>
 <td>../library/nonlinearreduction/R/umap_seurat</td>
 </tr>
@@ -1801,12 +1790,7 @@ See figure 2 as guide.</p>
 <div id="input-output-data-and-formats" class="section level3">
 <h3><strong>Input, Output: Data and Formats</strong></h3>
 <p>These are the extensions of input and output files.</p>
-<table style="width:99%;">
-<colgroup>
-<col width="21%" />
-<col width="23%" />
-<col width="53%" />
-</colgroup>
+<table>
 <thead>
 <tr class="header">
 <th>Format</th>
@@ -2049,9 +2033,10 @@ pipeline</strong></h3>
 <p>/ocpu/tmp/{key}/graphics/1</p>
 <p>/ocpu/tmp/{key}/files/clusters.rds</p>
 <p>/ocpu/tmp/{key}/files/DESCRIPTION</p>
-<p>/ocpu/tmp/{key}/files/pca_unlabeled.html</p>
-<p>/ocpu/tmp/{key}/files/pca03_labeled.html</p>
-<p>/ocpu/tmp/{key}/files/pca01_labeled.html</p>
+<p>/ocpu/tmp/{key}/files/pca_2d_unlabeled.html</p>
+<p>/ocpu/tmp/{key}/files/pca03_2dplot_labeled.html</p>
+<p>/ocpu/tmp/{key}/files/pca01_2dplot_labeled.html</p>
+<p>/ocpu/tmp/{key}/files/pca_3dplot.html</p>
 <p>/ocpu/tmp/{key}/files/pca_results.png</p>
 <p>/ocpu/tmp/{key}/files/pca_plot_unlabeled.png</p>
 <p>/ocpu/tmp/{key}/files/heatmap.png</p>
@@ -2076,7 +2061,7 @@ pipeline</strong></h3>
 <p>/ocpu/tmp/{key}/info</p>
 <p>/ocpu/tmp/{key}/files/DESCRIPTION</p>
 <p>/ocpu/tmp/{key}/files/clusters.rds</p>
-<p>/ocpu/tmp/{key}/files/tsne.html</p>
+<p>/ocpu/tmp/{key}/files/tsne_2dplot.html</p>
 <p>/ocpu/tmp/{key}/files/tsne_3dplot.html</p></td>
 </tr>
 <tr class="odd">
@@ -2087,7 +2072,7 @@ pipeline</strong></h3>
 <p>/ocpu/tmp/{key}/info</p>
 <p>/ocpu/tmp/{key}/files/DESCRIPTION</p>
 <p>/ocpu/tmp/{key}/files/clusters.rds</p>
-<p>/ocpu/tmp/{key}/files/umap.html</p>
+<p>/ocpu/tmp/{key}/files/umap_2dplot.html</p>
 <p>/ocpu/tmp/{key}/files/umap_3dplot.html</p></td>
 </tr>
 </tbody>
